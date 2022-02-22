@@ -1,5 +1,5 @@
 name: Testing setup-php
-on: push
+on: [ 'push' ]
 jobs:
   test:
     name: Installing PHP 5.6.
