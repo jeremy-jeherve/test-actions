@@ -5,7 +5,7 @@ on: [ push, pull_request ]
 jobs:
   test:
     name: PHPUnit (${{ matrix.php-versions }})
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-latest
     continue-on-error: ${{ matrix.experimental }}
     timeout-minutes: 3  # Successful runs seem to take ~1 minute
 
@@ -19,7 +19,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      - uses: shivammathur/setup-php@v2
+      - uses: shivammathur/setup-php@v1
         with:
           php-version: ${{ matrix.php-versions }}
           tools: composer
