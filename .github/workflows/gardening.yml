@@ -1,0 +1,46 @@
+name: Gardening
+on:
+  pull_request_target: # When a PR is opened, edited, updated, closed, or a label is added.
+    types: [opened, reopened, synchronize, edited, labeled, closed ]
+  issues: # For auto-triage of issues.
+    types: [opened, reopened, edited]
+  issue_comment: # To gather support references in issue comments.
+    types: [created]
+  push:
+    branches:
+      - trunk # Every time a PR is merged to trunk.
+concurrency:
+  # For pull_request_target, cancel any concurrent jobs with the same type (e.g. "opened", "labeled") and branch.
+  # Don't cancel any for other events, accomplished by grouping on the unique run_id.
+  group: gardening-${{ github.event_name }}-${{ github.event.action }}-${{ github.event_name == 'pull_request_target' && github.event.pull_request.head.ref || github.run_id }}
+  cancel-in-progress: true
+
+jobs:
+  repo-gardening:
+    name: "Manage activity in your GitHub repo"
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request_target' || github.event.pull_request.head.repo.full_name == github.event.pull_request.base.repo.full_name
+    timeout-minutes: 10  # 2021-03-12: Successful runs seem to take a few seconds, but can sometimes take a lot longer since we wait for previous runs to complete.
+    steps:
+     - name: Checkout
+       uses: actions/checkout@v3
+
+     - name: Setup Node
+       uses: actions/setup-node@v3
+       with:
+          node-version: lts
+
+     - name: Wait for prior instances of the workflow to finish
+       uses: softprops/turnstyle@v1
+       env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+     - name: Build Action
+       run: |
+          pnpm install
+       working-directory: ./src/
+
+     - name: "Run action"
+       uses: ./src/
+       with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
