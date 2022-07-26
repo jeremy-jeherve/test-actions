@@ -1,3 +1,5 @@
 .github/actions/gardening/dist/
 .github/actions/gardening/node_modules/
 .DS_Store
+.github/actions/triage/dist/
+.github/actions/triage/node_modules/
