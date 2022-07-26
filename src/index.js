@@ -1,5 +1,5 @@
 const { setFailed, getInput, debug } = require( '@actions/core' );
-const { context } = require( '@actions/github' );
+const { context, getOctokit } = require( '@actions/github' );
 
 ( async function main() {
 	const token = getInput( 'github_token' );
@@ -10,9 +10,28 @@ const { context } = require( '@actions/github' );
 
 	// Get info about the event.
 	const { payload, eventName } = context;
-	const { action } = payload;
 
-	debug( `Received event = '${ eventName }', action = '${ action }'` );
+	// eslint-disable-next-line new-cap
+	const octokit = new getOctokit( token );
+
+	debug( `Received event = '${ eventName }', action = '${ payload.action }'` );
+
+	// Trigger something when a Pull Request is opened.
+	if ( eventName === 'pull_request_target' && action === 'opened' ) {
+		debug( 'Pull Request opened' );
+
+		const { number, repository } = payload;
+		const { owner, name } = repository;
+
+
+		debug( `Add a label to PR #${ number }` );
+		await octokit.rest.issues.addLabels({
+			owner: owner.login,
+			repo: name,
+			issue_number: number,
+			labels: ['Just opened'],
+		});
+	}
 
 	debug( 'Done.' );
 } )();
