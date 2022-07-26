@@ -41,6 +41,6 @@ jobs:
        working-directory: ./src/
 
      - name: "Run action"
-       uses: ./src/
+       uses: ./
        with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
