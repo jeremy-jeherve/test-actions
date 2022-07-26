@@ -37,7 +37,7 @@ jobs:
 
      - name: Build Action
        run: |
-          pnpm install
+          npm install && npm run build
        working-directory: ./src/
 
      - name: "Run action"
