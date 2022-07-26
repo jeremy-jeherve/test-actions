@@ -38,9 +38,9 @@ jobs:
      - name: Build Action
        run: |
           npm install && npm run build
-       working-directory: ./src/
+       working-directory: ./.github/actions/gardening/
 
      - name: "Run action"
-       uses: ./
+       uses: ./.github/actions/gardening/
        with:
         github_token: ${{ secrets.GITHUB_TOKEN }}

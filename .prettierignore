@@ -1,2 +1,2 @@
-dist/
-node_modules/
+.github/gardening/dist/
+.github/gardening/node_modules/
