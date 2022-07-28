@@ -50,7 +50,7 @@ jobs:
         if: ${{ github.event_name == 'pull_request' && steps.set-reminder-comment.outputs.result != null }}
         with:
           script: |
-            const commentBody = `You can now test your Pull Request on WordPress.com. On your sandbox, run \`bin/jetpack-downloader test jetpack ${ context.head.ref }\` to get started.`;
+            const commentBody = `You can now test your Pull Request on WordPress.com. On your sandbox, run \`bin/jetpack-downloader test jetpack ${ context.ref }\` to get started.`;
             await github.rest.issues.updateComment( {
               owner: context.repo.owner,
               repo: context.repo.repo,
