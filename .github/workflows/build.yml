@@ -32,14 +32,13 @@ jobs:
         with:
           result-encoding: string
           script: |
-            console.log( `JSON.stringify( context ) `);
             const { id } = await github.rest.issues.createComment({
               issue_number: context.issue.number,
               owner: context.repo.owner,
               repo: context.repo.repo,
               body: 'The PR will need to be tested on WordPress.com. This comment will be updated with testing instructions as soon the build is complete.',
             })
-            retun id;
+            return id;
       
       - name: Other build steps happen here
         run: |
