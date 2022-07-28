@@ -32,6 +32,7 @@ jobs:
         with:
           result-encoding: string
           script: |
+            console.log( `JSON.stringify( context ) `);
             const { id } = await github.rest.issues.createComment({
               issue_number: context.issue.number,
               owner: context.repo.owner,
@@ -47,7 +48,7 @@ jobs:
       - name: Update reminder with Testing instructions
         id: update-reminder-comment
         uses: actions/github-script@v6
-        if: ${{ github.event_name == 'pull_request' }}
+        if: ${{ github.event_name == 'pull_request' && steps.set-reminder-comment.outputs.result != null }}
         with:
           script: |
             await github.rest.issues.updateComment( {
