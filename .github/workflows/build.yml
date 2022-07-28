@@ -51,6 +51,7 @@ jobs:
             const comments = await github.graphql(query, variables);
             let hasComment = false;
             comments.repository.pullRequest.comments.nodes.map( comment => {
+              console.log( body );
               if ( comment.body.includes( '<!-- wpcom-reminder-comment -->' ) ) {
                 hasComment = true;
               }
@@ -87,7 +88,8 @@ jobs:
         with:
           script: |
             const { BRANCH_NAME, COMMENT_ID } = process.env;
-            const commentBody = `<!-- wpcom-reminder-comment -->Are you an Automattician? You can now test your Pull Request on WordPress.com. On your sandbox, run \`bin/jetpack-downloader test jetpack ${ BRANCH_NAME }\` to get started.`;
+            const commentBody = `<!-- wpcom-reminder-comment -->
+            Are you an Automattician? You can now test your Pull Request on WordPress.com. On your sandbox, run \`bin/jetpack-downloader test jetpack ${ BRANCH_NAME }\` to get started.`;
             await github.rest.issues.updateComment( {
               owner: context.repo.owner,
               repo: context.repo.repo,
