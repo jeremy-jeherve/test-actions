@@ -86,7 +86,7 @@ jobs:
           COMMENT_ID: ${{ steps.set-reminder-comment.outputs.result }}
         with:
           script: |
-            const { BRANCH_NAME } = process.env;
+            const { BRANCH_NAME, COMMENT_ID } = process.env;
             const commentBody = `<!-- wpcom-reminder-comment -->Are you an Automattician? You can now test your Pull Request on WordPress.com. On your sandbox, run \`bin/jetpack-downloader test jetpack ${ BRANCH_NAME }\` to get started.`;
             await github.rest.issues.updateComment( {
               owner: context.repo.owner,
