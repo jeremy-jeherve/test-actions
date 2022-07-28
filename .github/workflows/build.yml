@@ -48,10 +48,12 @@ jobs:
         id: update-reminder-comment
         uses: actions/github-script@v6
         if: ${{ github.event_name == 'pull_request' && steps.set-reminder-comment.outputs.result != null }}
+        env:
+          BRANCH_NAME: ${{ GITHUB_HEAD_REF }}
         with:
           script: |
-            console.log( context );
-            const commentBody = `You can now test your Pull Request on WordPress.com. On your sandbox, run \`bin/jetpack-downloader test jetpack ${ context.ref }\` to get started.`;
+            const { BRANCH_NAME } = process.env;
+            const commentBody = `You can now test your Pull Request on WordPress.com. On your sandbox, run \`bin/jetpack-downloader test jetpack ${ BRANCH_NAME }\` to get started.`;
             await github.rest.issues.updateComment( {
               owner: context.repo.owner,
               repo: context.repo.repo,
