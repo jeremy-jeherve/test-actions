@@ -49,7 +49,7 @@ jobs:
         uses: actions/github-script@v6
         if: ${{ github.event_name == 'pull_request' && steps.set-reminder-comment.outputs.result != null }}
         env:
-          BRANCH_NAME: ${{ GITHUB_HEAD_REF }}
+          BRANCH_NAME: ${{ github.head_ref }}
         with:
           script: |
             const { BRANCH_NAME } = process.env;
