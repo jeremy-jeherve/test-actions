@@ -46,7 +46,7 @@ jobs:
             const variables = {
               owner: context.repo.owner,
               name: context.repo.repo,
-              pull_request_id: context.issue.number,
+              number: context.issue.number,
             };
             const comments = await github.graphql(query, variables);
             let hasComment = false;
