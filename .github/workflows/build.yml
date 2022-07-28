@@ -41,8 +41,7 @@ jobs:
             retun id;
       
       - name: Other build steps happen here
-        with:
-          script: |
+        run: |
             echo 'Building Jetpack...'
       
       - name: Update reminder with Testing instructions
