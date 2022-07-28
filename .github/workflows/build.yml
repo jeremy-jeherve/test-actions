@@ -49,7 +49,6 @@ jobs:
               number: context.issue.number,
             };
             const comments = await github.graphql(query, variables);
-            console.log( comments );
             let hasComment = false;
             comments.repository.pullRequest.comments.nodes.map( comment => {
               if ( comment.body.includes( '<!-- wpcom-reminder-comment -->' ) ) {
@@ -93,6 +92,6 @@ jobs:
               owner: context.repo.owner,
               repo: context.repo.repo,
               body: commentBody,
-              comment_id: ${ COMMENT_ID },
+              comment_id: COMMENT_ID,
             } );
 
