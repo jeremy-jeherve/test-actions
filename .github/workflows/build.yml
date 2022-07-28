@@ -38,11 +38,7 @@ jobs:
               repo: context.repo.repo,
               body: 'The PR will need to be tested on WordPress.com. This comment will be updated with testing instructions as soon the build is complete.',
             });
-            console.log( id );
             return id;
-
-      - name: Get result
-        run: echo "${{steps.set-reminder-comment.outputs.result}}"
 
       - name: Other build steps happen here
         run: |
@@ -54,10 +50,11 @@ jobs:
         if: ${{ github.event_name == 'pull_request' && steps.set-reminder-comment.outputs.result != null }}
         with:
           script: |
+            const commentBody = `You can now test your Pull Request on WordPress.com. On your sandbox, run \`bin/jetpack-downloader test jetpack ${ context.head.ref }\` to get started.`;
             await github.rest.issues.updateComment( {
               owner: context.repo.owner,
               repo: context.repo.repo,
-              body: 'Here are the instructions for testing the PR.',
+              body: commentBody,
               comment_id: ${{steps.set-reminder-comment.outputs.result}},
             } );
 
