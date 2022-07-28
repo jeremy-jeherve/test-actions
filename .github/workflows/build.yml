@@ -49,6 +49,7 @@ jobs:
               number: context.issue.number,
             };
             const comments = await github.graphql(query, variables);
+            console.log( comments );
             let hasComment = false;
             comments.data.repository.pullRequest.comments.nodes.map( comment => {
               if ( comment.body.includes( '<!-- wpcom-reminder-comment -->' ) ) {
