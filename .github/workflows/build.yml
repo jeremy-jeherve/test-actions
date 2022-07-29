@@ -74,13 +74,13 @@ jobs:
             await Promise.all(
               COMMENT_DB_ID
               .split(',')
-              .map( async comment_id => {
+              .map( async (comment_id) => {
                 await github.rest.issues.deleteComment({
                   owner: context.repo.owner,
                   repo: context.repo.repo,
                   comment_id
                 });
-              });
+              })
             );
 
       - name: Post reminder to test on WordPress.com
