@@ -51,7 +51,6 @@ jobs:
             const comments = await github.graphql(query, variables);
             let hasComment = false;
             comments.repository.pullRequest.comments.nodes.map( comment => {
-              console.log( comment );
               if ( comment.body.includes( '<!-- wpcom-reminder-comment -->' ) ) {
                 hasComment = true;
               }
@@ -62,7 +61,7 @@ jobs:
       - name: Post reminder to test on WordPress.com
         id: set-reminder-comment
         uses: actions/github-script@v6
-        if: ${{ github.event_name == 'pull_request' && steps.check-test-reminder-comment.outputs.result != true }}
+        if: ${{ github.event_name == 'pull_request' && steps.check-test-reminder-comment.outputs.result != 'true' }}
         with:
           result-encoding: string
           script: |
