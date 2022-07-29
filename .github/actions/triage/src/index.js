@@ -3,6 +3,7 @@ const { context, getOctokit } = require( '@actions/github' );
 
 /**
  * Determine the priority of the issue based on severity and workarounds info from the issue contents.
+ * This uses the priority matrix defined in this post: https://jeremy.hu/github-actions-build-javascript-action-part-2/
  *
  * @param {string} severity - How many users are impacted by the problem.
  * @param {string} workaround - Are there any available workarounds for the problem.
