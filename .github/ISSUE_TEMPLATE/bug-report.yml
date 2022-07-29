@@ -1,6 +1,6 @@
 name: Bug Report
 description: Tell me everything. Is the sky falling on your head, or is it just a bug in the code?
-labels: [ 'Needs triage', '[Type] Bug' ]
+labels: [ '[Type] Bug' ]
 body:
   - type: textarea
     id: steps
@@ -13,29 +13,6 @@ body:
         ...
     validations:
       required: true
-  - type: textarea
-    id: expected
-    attributes:
-      label: A clear and concise description of what you expected to happen.
-      placeholder: |
-        eg. Post should be liked.
-  - type: textarea
-    id: actual
-    attributes:
-      label: What actually happened
-      placeholder: |
-        eg. Clicking the button does nothing visibly.
-  - type: textarea
-    id: other
-    attributes:
-      label: Other information
-      placeholder: Screenshots, additional logs, notes, etc.
-  - type: markdown
-    attributes:
-      value: |
-        ## Issue severity
-
-        Please provide details around how big the problem is.
   - type: dropdown
     id: users-affected
     attributes:
