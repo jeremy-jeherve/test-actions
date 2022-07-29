@@ -37,7 +37,7 @@ jobs:
                 pullRequest(number:$number) {
                   comments(first: 100) {
                     nodes {
-                      id
+                      body
                     }
                   }
                 }
