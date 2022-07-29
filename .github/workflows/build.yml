@@ -51,7 +51,7 @@ jobs:
             const comments = await github.graphql(query, variables);
             let hasComment = false;
             comments.repository.pullRequest.comments.nodes.map( comment => {
-              console.log( body );
+              console.log( comment );
               if ( comment.body.includes( '<!-- wpcom-reminder-comment -->' ) ) {
                 hasComment = true;
               }
