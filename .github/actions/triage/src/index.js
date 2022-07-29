@@ -20,8 +20,6 @@ function definePriority( severity = '', workaround = '' ) {
 		return severity === 'One' ? medium : high;
 	} else if ( workaround === 'No but the platform is still usable' ) {
 		return medium;
-	} else if ( workaround === 'Yes, difficult to implement' ) {
-		return severity === 'All' ? high : medium;
 	} else if ( workaround !== '' && workaround !== '_No response_' ) { // "_No response_" is the default value.
 		return severity === 'All' || severity === 'Most (> 50%)' ? medium : low;
 	}
