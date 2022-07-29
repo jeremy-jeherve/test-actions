@@ -28,7 +28,7 @@ jobs:
       - name: Detect changed projects
         id: changed
         run: |
-          echo "::set-output name=projects::plugins/jetpack"
+          echo "::set-output name=projects::plugins/boost"
 
       - name: Check if a WordPress.com test reminder comment exists
         id: check-test-reminder-comment
@@ -71,15 +71,17 @@ jobs:
         with:
           script: |
             const { COMMENT_DB_ID } = process.env;
-            COMMENT_DB_ID
+            await Promise.all(
+              COMMENT_DB_ID
               .split(',')
-              .map( comment_id => {
+              .map( async (comment_id) => {
                 await github.rest.issues.deleteComment({
                   owner: context.repo.owner,
                   repo: context.repo.repo,
                   comment_id
                 });
-              });
+              })
+            );
 
       - name: Post reminder to test on WordPress.com
         id: set-reminder-comment
