@@ -32,7 +32,6 @@ body:
         - No but the platform is still usable
         - Yes, difficult to implement
         - Yes, easy to implement
-        - There is no user impact
   - type: textarea
     id: workarounds-detail
     attributes:

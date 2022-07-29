@@ -1,6 +1,35 @@
 const { setFailed, getInput, debug } = require( '@actions/core' );
 const { context, getOctokit } = require( '@actions/github' );
 
+/**
+ * Determine the priority of the issue based on severity and workarounds info from the issue contents.
+ *
+ * @param {string} severity - How many users are impacted by the problem.
+ * @param {string} workaround - Are there any available workarounds for the problem.
+ * @returns {string} Priority of issue. High, Medium, Low, or empty string.
+ */
+function definePriority( severity = '', workaround = '' ) {
+	const labels = {
+		high: '🏔 High',
+		medium: '🏕 Medium',
+		low: '🏝 Low',
+	};
+	const { high, medium, low } = labels;
+
+	if ( workaround === 'No and the platform is unusable' ) {
+		return severity === 'One' ? medium : high;
+	} else if ( workaround === 'No but the platform is still usable' ) {
+		return medium;
+	} else if ( workaround === 'Yes, difficult to implement' ) {
+		return severity === 'All' ? high : medium;
+	} else if ( workaround !== '' && workaround !== '_No response_' ) { // "_No response_" is the default value.
+		return severity === 'All' || severity === 'Most (> 50%)' ? medium : low;
+	}
+
+	// Fallback.
+	return '';
+}
+
 ( async function main() {
 	debug( 'Our action is running' );
 
@@ -21,10 +50,22 @@ const { context, getOctokit } = require( '@actions/github' );
 	// We only want to proceed if this is a newly opened issue.
 	if ( eventName === 'issues' && payload.action === 'opened' ) {
 		// Extra data from the event, to use in API requests.
-		const { issue: { number }, repository: { owner, name } } = payload;
+		const { issue: { number, body }, repository: { owner, name } } = payload;
 
 		// List of labels to add to the issue.
 		const labels = [ 'Issue triaged' ];
+
+		// Look for priority indicators in body.
+		const priorityRegex = /###\sSeverity\n\n(?<severity>.*)\n\n###\sAvailable\sworkarounds\?\n\n(?<workaround>.*)\n/gm;
+		let match;
+		while ( ( match = priorityRegex.exec( body ) ) ) {
+			const [ , severity = '', workaround = '' ] = match;
+
+			const priorityLabel = definePriority( severity, workaround );
+			if ( priorityLabel !== '' ) {
+				labels.push( priorityLabel );
+			}
+		}
 
 		debug(
 			`Add the following labels to issue #${ number }: ${ labels
