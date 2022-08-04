@@ -28,7 +28,7 @@ jobs:
       - name: Detect changed projects
         id: changed
         run: |
-          echo "::set-output name=projects::plugins/boost"
+          echo "::set-output name=projects::plugins/jetpack"
 
       - name: Check if a WordPress.com test reminder comment exists
         id: check-test-reminder-comment
