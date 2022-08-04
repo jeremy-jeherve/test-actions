@@ -34,9 +34,14 @@ jobs:
         id: check-test-reminder-comment
         uses: actions/github-script@v6
         if: ${{ github.event_name == 'pull_request' }}
+        env:
+          CHANGED_PROJECTS: ${{ join( steps.changed.outputs.projects ) }}
+          IS_JETPACK_CHANGED: ${{ !contains( join( steps.changed.outputs.projects ), 'plugins/jetpack' ) }}
         with:
           result-encoding: string
           script: |
+            const { CHANGED_PROJECTS, IS_JETPACK_CHANGED } = process.env;
+            console.log( CHANGED_PROJECTS, IS_JETPACK_CHANGED );
             const query = `query($owner:String!, $name:String!, $number:Int!) {
               repository(owner:$owner, name:$name){
                 pullRequest(number:$number) {
