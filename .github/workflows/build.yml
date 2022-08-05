@@ -25,6 +25,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
+        with:
+          path: monorepo
 
       - name: Detect changed projects
         id: changed
