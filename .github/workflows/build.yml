@@ -42,6 +42,7 @@ jobs:
           script: |
             const checkTestReminderComment = require('.github/actions/build/check-test-reminder-comment.js')
             const commentId = await checkTestReminderComment( github, context, core );
+            return commentId;
 
       - name: Other build steps happen here
         run: |

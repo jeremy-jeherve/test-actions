@@ -60,6 +60,7 @@ async function checkTestReminderComment( github, context, core ) {
 			repo: repoName,
 			body
 		});
+		core.debug( `Build: created test reminder comment with ID ${id}.` );
 		return id;
 	}
 
