@@ -13,7 +13,7 @@ const getCheckComments = require('./get-check-comments.js');
  *
  * @returns {Promise<number>} Promise resolving to a comment ID, or 0 if no comment is found.
  */
-async function checkTestReminderComment(github, context, core) {
+async function checkTestReminderComment( github, context, core ) {
 	const { repo, issue } = context;
 	const { owner, repo: repoName } = repo;
 	const { TOUCHED_PROJECTS, TEST_COMMENT_INDICATOR } = process.env;
