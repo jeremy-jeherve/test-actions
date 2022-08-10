@@ -26,16 +26,9 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - name: Detect changed projects
-        id: changed
-        run: |
-          echo "::set-output name=projects::['plugins/backup','plugins/boost']"
-
       - name: Check if a WordPress.com test reminder comment is needed.
         id: check-test-reminder-comment
         uses: actions/github-script@v6
-        env:
-          TOUCHED_PROJECTS: '${{ steps.changed.outputs.projects }}'
         if: ${{ github.event_name == 'pull_request' }}
         with:
           result-encoding: string
