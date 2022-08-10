@@ -54,9 +54,16 @@ jobs:
         if: ${{ github.event_name == 'pull_request' && steps.check-test-reminder-comment.outputs.result != 0 }}
         env:
           BRANCH_NAME: ${{ github.head_ref }}
-          COMMENT_ID: ${{ steps.set-reminder-comment.outputs.result }}
+          COMMENT_ID: ${{ steps.check-test-reminder-comment.outputs.result }}
         with:
           script: |
-            const updateTestReminderComment = require('.github/actions/build/update-comment.js')
-            const commentId = await updateTestReminderComment( github, context, core );
+            const { BRANCH_NAME, COMMENT_ID, TEST_COMMENT_INDICATOR } = process.env;
+            const commentBody = `${ TEST_COMMENT_INDICATOR }
+            Are you an Automattician? You can now test your Pull Request on WordPress.com. On your sandbox, run \`bin/jetpack-downloader test jetpack ${ BRANCH_NAME }\` to get started.`;
+            await github.rest.issues.updateComment( {
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: commentBody,
+              comment_id: +COMMENT_ID,
+            } );
 
