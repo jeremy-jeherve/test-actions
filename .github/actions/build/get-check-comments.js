@@ -25,7 +25,7 @@ async function getCheckComments( github, owner, repo, number, testCommentIndicat
 
 	core.debug( `get-comments: Get list of all test reminder comments on ${ cacheKey }.` );
 
-	for await ( const response of github.paginate.iterator( github.issues.listComments, {
+	for await ( const response of github.paginate.iterator( github.rest.issues.listComments, {
 		owner,
 		repo,
 		issue_number: +number,

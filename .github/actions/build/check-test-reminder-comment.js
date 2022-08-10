@@ -30,7 +30,7 @@ async function checkTestReminderComment( github, context, core ) {
 
 			await Promise.all(
 				testCommentIDs.map(async commentID => {
-					await github.issues.deleteComment({
+					await github.rest.issues.deleteComment({
 						owner,
 						repo: repoName,
 						comment_id: commentID,
