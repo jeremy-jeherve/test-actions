@@ -6,7 +6,7 @@
  * Make sure to keep this list in sync with the one in build-plugin-files.php on WordPress.com.
  * Keep this list in alphabetical order.
  */
-const fusionedFiles = [
+const deFusionedFiles = [
 	'.github/versions.sh',
 	'package.json',
 	'pnpm-lock.yaml',

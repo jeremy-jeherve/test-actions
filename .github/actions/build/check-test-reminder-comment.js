@@ -1,5 +1,5 @@
 const getCheckComments = require('./get-check-comments.js');
-const fusionedFiles = require( './fusioned-files.js' );
+const deFusionedFiles = require( './de-fusioned-files.js' );
 
 /* global process, github, core */
 
@@ -36,8 +36,8 @@ async function isTouchingDeFusionedFiles( github, owner, repo, number, core ) {
 	core.debug( `Build: compare the list of files modified in #${ number } with the list of De-Fusioned files.` );
 
 	return fileList.some((file) => {
-		return fusionedFiles.some((fusionFile) => {
-			return file.startsWith(fusionFile);
+		return deFusionedFiles.some((deFusionFile) => {
+			return file.startsWith(deFusionFile);
 		});
 	});
 }
