@@ -20,7 +20,7 @@ async function checkTestReminderComment( github, context, core ) {
 	const touchesJetpack = TOUCHED_PROJECTS.includes('plugins/jetpack');
 
 	// Get all the test reminder comments in our PR.
-	const testCommentIDs = await getCheckComments(github, owner, repoName, issue.number, TEST_COMMENT_INDICATOR);
+	const testCommentIDs = await getCheckComments(github, owner, repoName, issue.number, TEST_COMMENT_INDICATOR, core);
 
 	// This PR does not touch Jetpack.
 	if (!touchesJetpack) {
