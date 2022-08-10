@@ -64,6 +64,6 @@ jobs:
               owner: context.repo.owner,
               repo: context.repo.repo,
               body: commentBody,
-              comment_id: COMMENT_ID,
+              comment_id: +COMMENT_ID,
             } );
 
