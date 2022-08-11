@@ -2,6 +2,8 @@ name: Triage
 on:
   issues: # For auto-triage of issues.
     types: [opened]
+  pull_request_target: # For triaging PRs into project boards.
+    types: [opened,converted_to_draft,ready_for_review,closed,reopened]
 
 jobs:
   issue-triage:
@@ -30,3 +32,4 @@ jobs:
        uses: ./.github/actions/triage/
        with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
+        triage_projects_token: ${{ secrets.TRIAGE_PROJECTS_TOKEN }}
