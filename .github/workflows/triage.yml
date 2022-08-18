@@ -3,7 +3,7 @@ on:
   issues: # For auto-triage of issues.
     types: [opened]
   pull_request_target: # For triaging PRs into project boards.
-    types: [opened,converted_to_draft,ready_for_review,reopened]
+    types: [opened,converted_to_draft,ready_for_review]
 
 jobs:
   issue-triage:
