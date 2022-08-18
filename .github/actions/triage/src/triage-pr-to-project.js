@@ -123,8 +123,7 @@ async function setPriorityField( octokit, projectInfo, projectItemId, statusText
 		}
 	);
 
-	debug( `Triage: response ${ JSON.stringify( projectNewItemDetails ) }` );
-	const newProjectItemId = projectNewItemDetails.projectV2Item.id;
+	const newProjectItemId = projectNewItemDetails.set_status.projectV2Item.id;
 	if ( ! newProjectItemId ) {
 		debug( `Triage: Failed to set the "${ statusText }" status for this project item.` );
 		return '';
