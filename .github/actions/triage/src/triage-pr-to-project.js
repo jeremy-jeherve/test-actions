@@ -60,17 +60,18 @@ async function getProjectDetails( octokit, projectBoardLink ) {
 
 	// Extract the project node ID.
 	debug( `Triage: Project details: ${ JSON.stringify( projectDetails ) }` );
-	const projectNodeId = projectDetails.organization?.projectV2.id;
+	const projectNodeId = projectDetails[projectInfo.ownerType]?.projectV2.id;
 	if ( projectNodeId ) {
 		projectInfo.projectNodeId = projectNodeId; // Project board node ID. String.
 	}
 
 	// Extract the ID of the Status field.
-	const statusField = projectDetails.organization?.projectV2.fields.nodes.find( ( field ) => field.name === 'Status' );
+	const statusField = projectDetails[projectInfo.ownerType]?.projectV2.fields.nodes.find( ( field ) => field.name === 'Status' );
 	if ( statusField ) {
 		projectInfo.statusFieldId = +statusField.id; // ID of the Status field. number.
 	}
 
+	debug( `Triage: Project details after massaging: ${ JSON.stringify( projectInfo ) }` );
 	return projectInfo;
 }
 
