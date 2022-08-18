@@ -4,11 +4,10 @@ const { setFailed, getInput, debug } = require( '@actions/core' );
 
 /**
  * Get Information about a project board.
- * 
+ *
  * @param {GitHub} octokit          - Initialized Octokit REST client.
  * @param {string} projectBoardLink - The link to the project board.
- *
- * @return {Promise<Object>} - Project board information.
+ * @returns {Promise<Object>} - Project board information.
  */
 async function getProjectDetails( octokit, projectBoardLink ) {
 	const projectRegex = /^(?:https:\/\/)?github\.com\/(?<ownerType>orgs|users)\/(?<ownerName>[^/]+)\/projects\/(?<projectNumber>\d+)/;
@@ -18,12 +17,14 @@ async function getProjectDetails( octokit, projectBoardLink ) {
 		return {};
 	}
 
-	const { groups: { ownerType, ownerName, projectNumber } } = matches;
+	const {
+		groups: { ownerType, ownerName, projectNumber },
+	} = matches;
 
 	const projectInfo = {
 		ownerType: ownerType === 'orgs' ? 'organization' : 'user', // GitHub API requests require 'organization' or 'user'.
 		ownerName,
-		projectNumber: parseInt(projectNumber, 10),
+		projectNumber: parseInt( projectNumber, 10 ),
 	};
 
 	// First, use the GraphQL API to request the project's node ID,
@@ -59,13 +60,15 @@ async function getProjectDetails( octokit, projectBoardLink ) {
 	);
 
 	// Extract the project node ID.
-	const projectNodeId = projectDetails[projectInfo.ownerType]?.projectV2.id;
+	const projectNodeId = projectDetails[ projectInfo.ownerType ]?.projectV2.id;
 	if ( projectNodeId ) {
 		projectInfo.projectNodeId = projectNodeId; // Project board node ID. String.
 	}
 
 	// Extract the ID of the Status field.
-	const statusField = projectDetails[projectInfo.ownerType]?.projectV2.fields.nodes.find( ( field ) => field.name === 'Status' );
+	const statusField = projectDetails[ projectInfo.ownerType ]?.projectV2.fields.nodes.find(
+		field => field.name === 'Status'
+	);
 	if ( statusField ) {
 		projectInfo.status = statusField; // Info about our status column (id as well as possible values).
 	}
@@ -75,13 +78,12 @@ async function getProjectDetails( octokit, projectBoardLink ) {
 
 /**
  * Set custom fields for a project item.
- * 
+ *
  * @param {GitHub} octokit       - Initialized Octokit REST client.
  * @param {Object} projectInfo   - Info about our project board.
- * @param {String} projectItemId - The ID of the project item.
+ * @param {string} projectItemId - The ID of the project item.
  * @param {string} statusText    - Status of our PR (must match an existing column in the project board).
- * 
- * @returns {Promise<String>} - The new project item id.
+ * @returns {Promise<string>} - The new project item id.
  */
 async function setPriorityField( octokit, projectInfo, projectItemId, statusText ) {
 	const {
@@ -93,9 +95,11 @@ async function setPriorityField( octokit, projectInfo, projectItemId, statusText
 	} = projectInfo;
 
 	// Find the ID of the status option that matches our PR status.
-	const statusOptionId = options.find( ( option ) => option.name === statusText ).id;
+	const statusOptionId = options.find( option => option.name === statusText ).id;
 	if ( ! statusOptionId ) {
-		debug( `Triage: Status ${statusText} does not exist as a colunm option in the project board.` );
+		debug(
+			`Triage: Status ${ statusText } does not exist as a colunm option in the project board.`
+		);
 		return '';
 	}
 
@@ -119,7 +123,7 @@ async function setPriorityField( octokit, projectInfo, projectItemId, statusText
 		}
 	);
 
-	const newProjectItemId = projectNewItemDetails.projectV2Item.item.id;
+	const newProjectItemId = projectNewItemDetails.projectV2Item.id;
 	if ( ! newProjectItemId ) {
 		debug( `Triage: Failed to set the "${ statusText }" status for this project item.` );
 		return '';
@@ -135,8 +139,7 @@ async function setPriorityField( octokit, projectInfo, projectItemId, statusText
  *
  * @param {GitHub} octokit     - Initialized Octokit REST client.
  * @param {Object} projectInfo - Info about our project board.
- * @param {String} node_id     - The node_id of the Pull Request.
- *
+ * @param {string} node_id     - The node_id of the Pull Request.
  * @returns {Promise<string>} - Info about the project item id that was created.
  */
 async function addPrToBoard( octokit, projectInfo, node_id ) {
@@ -172,15 +175,16 @@ async function addPrToBoard( octokit, projectInfo, node_id ) {
 
 /**
  * Handle automatic triage of Pull Requests into a Github Project board.
- * 
+ *
  * @param {WebhookPayloadPullRequest} payload - The payload from the Github Action.
  * @param {GitHub}                    octokit - Initialized Octokit REST client.
- *
  * @returns {Promise<void>}
  */
 async function triagePrToProject( payload, octokit ) {
 	// Extra data from the event, to use in API requests.
-	const { pull_request: { number, draft, node_id }, repository: { owner, name } } = payload;
+	const {
+		pull_request: { number, draft, node_id },
+	} = payload;
 	const isDraft = !! draft;
 
 	const projectBoardLink = getInput( 'triage_projects_board' );
@@ -217,7 +221,9 @@ async function triagePrToProject( payload, octokit ) {
 	}
 
 	// If the PR is ready for review, let's add it to the Needs Review column.
-	debug( `Triage: Pull Request #${ number } is ready for review. Add it to the Needs Review column.` );
+	debug(
+		`Triage: Pull Request #${ number } is ready for review. Add it to the Needs Review column.`
+	);
 	await setPriorityField( octokit, projectInfo, projectItemId, 'Needs Review' );
 	return;
 }
