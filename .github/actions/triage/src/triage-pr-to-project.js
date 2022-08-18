@@ -59,7 +59,6 @@ async function getProjectDetails( octokit, projectBoardLink ) {
 	);
 
 	// Extract the project node ID.
-	debug( `Triage: Project details: ${ JSON.stringify( projectDetails ) }` );
 	const projectNodeId = projectDetails[projectInfo.ownerType]?.projectV2.id;
 	if ( projectNodeId ) {
 		projectInfo.projectNodeId = projectNodeId; // Project board node ID. String.
@@ -71,7 +70,6 @@ async function getProjectDetails( octokit, projectBoardLink ) {
 		projectInfo.statusFieldId = statusField.id; // ID of the Status field. string.
 	}
 
-	debug( `Triage: Project details after massaging: ${ JSON.stringify( projectInfo ) }` );
 	return projectInfo;
 }
 
@@ -132,7 +130,7 @@ async function setPriorityField( octokit, projectInfo, projectItemId, status ) {
  * @returns {Promise<string>} - Info about the project item id that was created.
  */
 async function addPrToBoard( octokit, projectInfo, node_id ) {
-	const { projectNodeId } = projectInfo;
+	const { projectNodeId, ownerType } = projectInfo;
 
 	// Add our PR to that project board.
 	const projectItemDetails = await octokit.graphql(
@@ -151,7 +149,8 @@ async function addPrToBoard( octokit, projectInfo, node_id ) {
 		}
 	);
 
-	const projectItemId = projectItemDetails.addProjectV2ItemById.id;
+	debug( `Triage: Project item details: ${ JSON.stringify( projectItemDetails ) }` );
+	const projectItemId = projectItemDetails[ownerType]?.addProjectV2ItemById.id;
 	if ( ! projectItemId ) {
 		debug( `Triage: Failed to add PR to project board.` );
 		return '';
