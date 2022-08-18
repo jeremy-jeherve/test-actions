@@ -109,7 +109,7 @@ async function setPriorityField( octokit, projectInfo, projectItemId, status ) {
 		}
 	);
 
-	const newProjectItemId = projectNewItemDetails.projectV2Item.id;
+	const newProjectItemId = projectNewItemDetails.projectV2Item.item.id;
 	if ( ! newProjectItemId ) {
 		debug( `Triage: Failed to set the "${ status }" status for this project item.` );
 		return '';
@@ -130,7 +130,7 @@ async function setPriorityField( octokit, projectInfo, projectItemId, status ) {
  * @returns {Promise<string>} - Info about the project item id that was created.
  */
 async function addPrToBoard( octokit, projectInfo, node_id ) {
-	const { projectNodeId, ownerType } = projectInfo;
+	const { projectNodeId } = projectInfo;
 
 	// Add our PR to that project board.
 	const projectItemDetails = await octokit.graphql(
@@ -150,7 +150,7 @@ async function addPrToBoard( octokit, projectInfo, node_id ) {
 	);
 
 	debug( `Triage: Project item details: ${ JSON.stringify( projectItemDetails ) }` );
-	const projectItemId = projectItemDetails[ownerType]?.addProjectV2ItemById.id;
+	const projectItemId = projectItemDetails.addProjectV2ItemById.item.id;
 	if ( ! projectItemId ) {
 		debug( `Triage: Failed to add PR to project board.` );
 		return '';
