@@ -68,7 +68,7 @@ async function getProjectDetails( octokit, projectBoardLink ) {
 	// Extract the ID of the Status field.
 	const statusField = projectDetails[projectInfo.ownerType]?.projectV2.fields.nodes.find( ( field ) => field.name === 'Status' );
 	if ( statusField ) {
-		projectInfo.statusFieldId = +statusField.id; // ID of the Status field. number.
+		projectInfo.statusFieldId = statusField.id; // ID of the Status field. string.
 	}
 
 	debug( `Triage: Project details after massaging: ${ JSON.stringify( projectInfo ) }` );
@@ -83,7 +83,7 @@ async function getProjectDetails( octokit, projectBoardLink ) {
  * @param {String} projectItemId - The ID of the project item.
  * @param {string} status        - Status of our PR (must match an existing column in the project board).
  * 
- * @returns {Promise<Object>} - The new project item details: project id, project item id, item id.
+ * @returns {Promise<String>} - The new project item id.
  */
 async function setPriorityField( octokit, projectInfo, projectItemId, status ) {
 	const {
@@ -189,7 +189,7 @@ async function triagePrToProject( payload, octokit ) {
 	}
 
 	// Add our Pull Request to the project board.
-	const projectItemId = await addPrToBoard( octokit, node_id, projectInfo );
+	const projectItemId = await addPrToBoard( octokit, projectInfo, node_id );
 	if ( ! projectItemId ) {
 		setFailed( 'Triage: failed to add PR to project board' );
 		return;
