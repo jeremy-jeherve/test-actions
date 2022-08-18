@@ -67,8 +67,7 @@ async function getProjectDetails( octokit, projectBoardLink ) {
 	// Extract the ID of the Status field.
 	const statusField = projectDetails[projectInfo.ownerType]?.projectV2.fields.nodes.find( ( field ) => field.name === 'Status' );
 	if ( statusField ) {
-		debug( `Triage: Found the "Status" field. ${ JSON.stringify( statusField ) }` );
-		projectInfo.statusFieldId = statusField.id; // ID of the Status field. string.
+		projectInfo.status = statusField; // Info about our status column (id as well as possible values).
 	}
 
 	return projectInfo;
@@ -80,15 +79,25 @@ async function getProjectDetails( octokit, projectBoardLink ) {
  * @param {GitHub} octokit       - Initialized Octokit REST client.
  * @param {Object} projectInfo   - Info about our project board.
  * @param {String} projectItemId - The ID of the project item.
- * @param {string} status        - Status of our PR (must match an existing column in the project board).
+ * @param {string} statusText    - Status of our PR (must match an existing column in the project board).
  * 
  * @returns {Promise<String>} - The new project item id.
  */
-async function setPriorityField( octokit, projectInfo, projectItemId, status ) {
+async function setPriorityField( octokit, projectInfo, projectItemId, statusText ) {
 	const {
 		projectNodeId, // Project board node ID.
-		statusFieldId, // ID of the Status field.
+		status: {
+			id: statusFieldId, // ID of the status field.
+			options,
+		},
 	} = projectInfo;
+
+	// Find the ID of the status option that matches our PR status.
+	const statusOptionId = options.find( ( option ) => option.name === statusText ).id;
+	if ( ! statusOptionId ) {
+		debug( `Triage: Status ${statusText} does not exist as a colunm option in the project board.` );
+		return '';
+	}
 
 	const projectNewItemDetails = await octokit.graphql(
 		`mutation ( $input: UpdateProjectV2ItemFieldValueInput! ) {
@@ -104,7 +113,7 @@ async function setPriorityField( octokit, projectInfo, projectItemId, status ) {
 				itemId: projectItemId,
 				fieldId: statusFieldId,
 				value: {
-					singleSelectOptionId: status,
+					singleSelectOptionId: statusOptionId,
 				},
 			},
 		}
@@ -112,11 +121,11 @@ async function setPriorityField( octokit, projectInfo, projectItemId, status ) {
 
 	const newProjectItemId = projectNewItemDetails.projectV2Item.item.id;
 	if ( ! newProjectItemId ) {
-		debug( `Triage: Failed to set the "${ status }" status for this project item.` );
+		debug( `Triage: Failed to set the "${ statusText }" status for this project item.` );
 		return '';
 	}
 
-	debug( `Triage: Project item ${ newProjectItemId } was moved to "${ status }" status.` );
+	debug( `Triage: Project item ${ newProjectItemId } was moved to "${ statusText }" status.` );
 
 	return newProjectItemId; // New Project item ID (what we just edited). String.
 }
@@ -195,7 +204,7 @@ async function triagePrToProject( payload, octokit ) {
 	}
 
 	// If we have no info about the status column, stop.
-	if ( ! projectInfo.statusFieldId ) {
+	if ( ! projectInfo.status ) {
 		debug( `Triage: No status column found in project board.` );
 		return;
 	}
