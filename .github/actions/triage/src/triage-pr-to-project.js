@@ -90,7 +90,7 @@ async function setPriorityField( octokit, projectInfo, projectItemId, status ) {
 	} = projectInfo;
 
 	const projectNewItemDetails = await octokit.graphql(
-		`mutation ( $input: updateProjectV2ItemFieldValueInput! ) {
+		`mutation ( $input: UpdateProjectV2ItemFieldValueInput! ) {
 			set_status: updateProjectV2ItemFieldValue( input: $input ) {
 				projectV2Item {
 					id
@@ -149,7 +149,6 @@ async function addPrToBoard( octokit, projectInfo, node_id ) {
 		}
 	);
 
-	debug( `Triage: Project item details: ${ JSON.stringify( projectItemDetails ) }` );
 	const projectItemId = projectItemDetails.addProjectV2ItemById.item.id;
 	if ( ! projectItemId ) {
 		debug( `Triage: Failed to add PR to project board.` );
