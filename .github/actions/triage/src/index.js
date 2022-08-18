@@ -1,7 +1,6 @@
 const { setFailed, getInput, debug } = require( '@actions/core' );
 const { context, getOctokit } = require( '@actions/github' );
-
-/* global WebhookPayloadPullRequest, GitHub */
+const triagePrToProject = require( './triage-pr-to-project' );
 
 /**
  * Determine the priority of the issue based on severity and workarounds info from the issue contents.
@@ -31,45 +30,6 @@ function definePriority( severity = '', workaround = '' ) {
 	return '';
 }
 
-/**
- * Handle automatic triage of Pull Requests into a Github Project board.
- * 
- * @param {WebhookPayloadPullRequest} payload - The payload from the Github Action.
- * @param {GitHub}                    octokit - Initialized Octokit REST client.
- *
- * @returns {Promise<void>}
- */
-async function triagePullRequest( payload, octokit ) {
-	// Extra data from the event, to use in API requests.
-	const { action, pull_request: { number, draft, state }, repository: { owner, name } } = payload;
-	const isDraft = !! draft;
-
-	// If the PR is closed, let's move it to the Done column.
-	if ( state === 'closed' ) {
-		debug( `Triage: Pull Request #${ number } is closed. Nothing to do here, GitHub projects already handles moving cards for merged PRs.` );
-
-		return;
-	}
-
-	// If a PR is reopened, let's move it back to the In Progress column.
-	if ( action === 'reopened' ) {
-		debug( `Triage: Pull Request #${ number } has been reopened. Move it back to the In Progress column.` );
-
-	}
-
-	// If a PR is opened but not ready for review yet, add it to the In Progress column.
-	if ( isDraft ) {
-		debug( `Triage: Pull Request #${ number } is a draft. Add it to the In Progress column.` );
-
-		return;
-	}
-
-	// If the PR is ready for review, let's add it to the Needs Review column.
-	debug( `Triage: Pull Request #${ number } is ready for review. Add it to the Needs Review column.` );
-
-	return;
-}
-
 ( async function main() {
 	debug( 'Our action is running' );
 
@@ -96,7 +56,7 @@ async function triagePullRequest( payload, octokit ) {
 		// For this task, we need octokit to have extra permissions not provided by the default GitHub token.
 		// Let's create a new octokit instance using our own custom token.
 		const projectOctokit = new getOctokit( projectToken );
-		await triagePullRequest( payload, projectOctokit );
+		await triagePrToProject( payload, projectOctokit );
 	}
 
 	// We only want to proceed if this is a newly opened issue.

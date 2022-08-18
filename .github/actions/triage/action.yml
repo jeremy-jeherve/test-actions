@@ -9,6 +9,10 @@ inputs:
     description: "Triage Projects access token"
     required: false
     default: ""
+  triage_projects_board:
+    description: "Triage Projects board URL"
+    required: false
+    default: ""
 runs:
   using: node16
   main: "dist/index.js"
