@@ -59,6 +59,7 @@ async function getProjectDetails( octokit, projectBoardLink ) {
 	);
 
 	// Extract the project node ID.
+	debug( `Triage: Project details: ${ JSON.stringify( projectDetails ) }` );
 	const projectNodeId = projectDetails.organization?.projectV2.id;
 	if ( projectNodeId ) {
 		projectInfo.projectNodeId = projectNodeId; // Project board node ID. String.
