@@ -14,6 +14,7 @@ async function getProjectDetails( octokit, projectBoardLink ) {
 	const projectRegex = /^(?:https:\/\/)?github\.com\/(?<ownerType>orgs|users)\/(?<ownerName>[^/]+)\/projects\/(?<projectNumber>\d+)/;
 	const matches = projectBoardLink.match( projectRegex );
 	if ( ! matches ) {
+		debug( `Triage: Invalid project board link provided. Cannot triage to a board` );
 		return {};
 	}
 
@@ -22,20 +23,14 @@ async function getProjectDetails( octokit, projectBoardLink ) {
 	const projectInfo = {
 		ownerType: ownerType === 'orgs' ? 'organization' : 'user', // GitHub API requests require 'organization' or 'user'.
 		ownerName,
-		projectNumber: parseInt( projectNumber, 10 ),
+		projectNumber: parseInt(projectNumber, 10),
 	};
-
-	if ( Object.keys( projectInfo ).length === 0 ) {
-		debug( `Triage: Invalid project board link provided. Cannot triage to a board` );
-		setFailed( 'Invalid project board link provided. Cannot triage to a board' );
-		return {};
-	}
 
 	// First, use the GraphQL API to request the project's node ID,
 	// as well as info about the first 20 fields for that project.
 	const projectDetails = await octokit.graphql(
 		`query getProject($ownerName: String!, $projectNumber: Int!) {
-			${ ownerType }(login: $ownerName) {
+			${ projectInfo.ownerType }(login: $ownerName) {
 				projectV2(number: $projectNumber) {
 					id
 					fields(first:20) {
@@ -58,8 +53,8 @@ async function getProjectDetails( octokit, projectBoardLink ) {
 			}
 		}`,
 		{
-			ownerName,
-			projectNumber,
+			ownerName: projectInfo.ownerName,
+			projectNumber: projectInfo.projectNumber,
 		}
 	);
 
