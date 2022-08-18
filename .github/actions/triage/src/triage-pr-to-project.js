@@ -67,6 +67,7 @@ async function getProjectDetails( octokit, projectBoardLink ) {
 	// Extract the ID of the Status field.
 	const statusField = projectDetails[projectInfo.ownerType]?.projectV2.fields.nodes.find( ( field ) => field.name === 'Status' );
 	if ( statusField ) {
+		debug( `Triage: Found the "Status" field. ${ JSON.stringify( statusField ) }` );
 		projectInfo.statusFieldId = statusField.id; // ID of the Status field. string.
 	}
 
