@@ -2,6 +2,19 @@ name: Bug Report
 description: Tell me everything. Is the sky falling on your head, or is it just a bug in the code?
 labels: [ '[Type] Bug' ]
 body:
+  - type: dropdown
+    id: impacted-component
+    attributes:
+      label: Impacted component
+      description: Please select the part of the product your report is about. Multiple selection is supported.
+      options:
+        - Admin interface
+        - Widget (Frontend)
+        - Block (Editor)
+        - None / Other
+      multiple: true
+    validations:
+      required: true
   - type: textarea
     id: steps
     attributes:
