@@ -31,6 +31,26 @@ function definePriority( severity = '', workaround = '' ) {
 }
 
 /**
+ * Find list of components impacted by issue, based off issue contents.
+ *
+ * @param {string} body - The issue content.
+ * @returns {Array} Components concerned by issue.
+ */
+function findComponents( body ) {
+	const regex = /###\sImpacted\scomponent\n\n([a-zA-Z\s\(\),]*)\n\n/gm;
+
+	const match = regex.exec(body);
+	if ( match ) {
+		const [, components] = match;
+		return components.split(', ').filter(v => v.trim() !== '');
+	}
+
+	// Fallback.
+	debug( 'Triage: No components found.' );
+	return [];
+}
+
+/**
  * 
  * @param {WebhookPayloadIssue} payload - The payload from the Github Action.
  * @param {GitHub}              octokit - Initialized Octokit REST client.
@@ -53,6 +73,12 @@ async function labelIssues( payload, octokit ) {
 		if ( priorityLabel !== '' ) {
 			labels.push( priorityLabel );
 		}
+	}
+
+	// Look for a component indicator in the issue body.
+	const impactedComponents = findComponents( body );
+	if ( impactedComponents.length > 0 ) {
+		impactedComponents.map( component => labels.push( `[Component] ${ component }` ) );
 	}
 
 	debug(
