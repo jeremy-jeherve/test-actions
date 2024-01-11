@@ -2,8 +2,8 @@
 name: 'Mark stale issues'
 on:
   schedule:
-    # Run every 6 hours at xx:30.
-    - cron: '30 */6 * * *'
+    # Run every 2 minutes
+    - cron: '*/2 * * * *'
 
 jobs:
   stale:
