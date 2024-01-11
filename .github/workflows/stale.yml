@@ -43,8 +43,16 @@ jobs:
           channel-id: 'CN2FSK7L4'
           payload: |
             {
-              `The following issues have been marked as stale. Please review them and take appropriate action.
-              ${{ join( steps.stale.outputs.staled-issues-prs, ',' ) }}`
+                "text": "The following issues have been marked as stale. Please review them and take appropriate action.",
+                "blocks": [
+                    {
+                        "type": "section",
+                        "text": {
+                            "type": "mrkdwn",
+                            "text": The following issues have been marked as stale. Please review them and take appropriate action: ${{ join( steps.stale.outputs.staled-issues-prs, ',' ) }}"
+                        }
+                    }
+                ]
             }
         env:
-          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
