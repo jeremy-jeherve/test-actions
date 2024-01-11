@@ -36,16 +36,18 @@ jobs:
           operations-per-run: 525
       - name: Build Stale issues list
         id: stale-build-list
+        uses: actions/github-script@v6
         # Run some javascript to loop through the steps.stale.outputs.staled-issues-prs array, and build a list of stale issues.
-        run: |
-          const staleIssues = steps.stale.outputs.staled-issues-prs;
-          let staleIssuesList = '';
-          staleIssues.forEach(function(issue) {
-            if ( true === issue.markedStaleThisRun ) {
-                staleIssuesList += `\\n- [#${issue.number}](https://github.com/jeherve/test-actions/issues/${issue.number}) ${issue.title}`;
-            }
-          });
-          console.log(`::set-output name=staled-issues::${staleIssuesList}`);
+        with:
+            script: |
+                const staleIssues = steps.stale.outputs.staled-issues-prs;
+                let staleIssuesList = '';
+                staleIssues.forEach(function(issue) {
+                    if ( true === issue.markedStaleThisRun ) {
+                        staleIssuesList += `\\n- [#${issue.number}](https://github.com/jeherve/test-actions/issues/${issue.number}) ${issue.title}`;
+                    }
+                });
+                console.log(`::set-output name=staled-issues::${staleIssuesList}`);
       - name: Post about Stale issues on Slack
         id: stale-post-slack
         uses: slackapi/slack-github-action@v1.24.0
