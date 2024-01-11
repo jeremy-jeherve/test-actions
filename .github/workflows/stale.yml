@@ -29,7 +29,7 @@ jobs:
           # Get issues in ascending (oldest first) order.
           ascending: true
           # Label to apply when issue is marked stale.
-          stale-issue-label: '[Status] Stale'
+          stale-issue-label: '[Status] Sale'
           # Label to apply when PR is marked as stale.
           stale-pr-label: '[Status] Stale'
           # Increase number of operations executed per run.
@@ -45,7 +45,8 @@ jobs:
                 const staleIssues = JSON.parse( process.env.ISSUES );
                 let staleIssuesList = '';
                 staleIssues.forEach(function(issue) {
-                    if ( true === issue.markedStaleThisRun ) {
+                    if ( issue.isStale === false ) {
+                    //if ( true === issue.markedStaleThisRun ) {
                         staleIssuesList += `\\n- [#${issue.number}](https://github.com/jeherve/test-actions/issues/${issue.number}) ${issue.title}`;
                     }
                 });
