@@ -37,17 +37,19 @@ jobs:
       - name: Build Stale issues list
         id: stale-build-list
         uses: actions/github-script@v6
+        env:
+          ISSUES: ${{ steps.stale.outputs.staled-issues-prs }}
         # Run some javascript to loop through the steps.stale.outputs.staled-issues-prs array, and build a list of stale issues.
         with:
             script: |
-                const staleIssues = steps.stale.outputs.staled-issues-prs;
+                const staleIssues = JSON.parse( process.env.ISSUES );
                 let staleIssuesList = '';
                 staleIssues.forEach(function(issue) {
                     if ( true === issue.markedStaleThisRun ) {
                         staleIssuesList += `\\n- [#${issue.number}](https://github.com/jeherve/test-actions/issues/${issue.number}) ${issue.title}`;
                     }
                 });
-                console.log(`::set-output name=staled-issues::${staleIssuesList}`);
+                return staleIssuesList;
       - name: Post about Stale issues on Slack
         id: stale-post-slack
         uses: slackapi/slack-github-action@v1.24.0
@@ -61,7 +63,7 @@ jobs:
                         "type": "section",
                         "text": {
                             "type": "mrkdwn",
-                            "text": The following issues have been marked as stale. Please review them and take appropriate action:\\n ${{ steps.stale-build-list.outputs.staled-issues }}"
+                            "text": The following issues have been marked as stale. Please review them and take appropriate action:\\n ${{ steps.stale-build-list.outputs.result }}"
                         }
                     }
                 ]
