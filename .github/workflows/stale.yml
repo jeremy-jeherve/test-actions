@@ -53,11 +53,11 @@ jobs:
       - name: Post about Stale issues on Slack
         id: stale-post-slack
         uses: slackapi/slack-github-action@v1.24.0
+        if: ${{ fromJSON( steps.stale-build-list.outputs.result ) != '' }}
         with:
-          channel-id: 'CN2FSK7L4'
+          channel-id: ${{ secrets.SLACK_QUALITY_CHANNEL }}
           payload: |
             {
-                "text": "The following issues have been marked as stale. Please review them and take appropriate action.",
                 "blocks": [
                     {
                         "type": "section",
@@ -66,7 +66,11 @@ jobs:
                             "text": The following issues have been marked as stale. Please review them and take appropriate action:\\n ${{ steps.stale-build-list.outputs.result }}"
                         }
                     }
-                ]
+                ],
+                "text": "The following issues have been marked as stale. Please review them and take appropriate action.",
+                unfurl_links: false,
+                unfurl_media: false,
             }
         env:
-          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+          SLACK_QUALITY_CHANNEL: ${{ secrets.SLACK_QUALITY_CHANNEL }}
+          SLACK_BOT_TOKEN: ${{ secrets.SLACK_TOKEN }}
