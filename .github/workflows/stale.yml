@@ -46,11 +46,11 @@ jobs:
                 let staleIssuesList = '';
                 staleIssues.forEach(function(issue) {
                     if ( true === issue.markedStaleThisRun ) {
-                        staleIssuesList += `\\n- [#${issue.number}](https://github.com/jeherve/test-actions/issues/${issue.number}) ${issue.title}`;
+                        staleIssuesList += `\\n- ${issue.title} (https://github.com/jeherve/test-actions/issues/${issue.number})`;
                     }
                 });
-                staleIssuesList += `\\n- [#${14}](https://github.com/jeherve/test-actions/issues/14) something`;
-                staleIssuesList += `\\n- [#${15}](https://github.com/jeherve/test-actions/issues/15) something else`;
+                staleIssuesList += `\\n- something (https://github.com/jeherve/test-actions/issues/14)`;
+                staleIssuesList += `\\n- something else (https://github.com/jeherve/test-actions/issues/15)`;
                 return staleIssuesList;
       - name: Post about Stale issues on Slack
         id: stale-post-slack
