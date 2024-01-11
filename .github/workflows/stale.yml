@@ -70,8 +70,8 @@ jobs:
                     }
                 ],
                 "text": "The following issues have been marked as stale. Please review them and take appropriate action.",
-                unfurl_links: false,
-                unfurl_media: false
+                "unfurl_links": false,
+                "unfurl_media": false
             }
         env:
           SLACK_QUALITY_CHANNEL: ${{ secrets.SLACK_QUALITY_CHANNEL }}
