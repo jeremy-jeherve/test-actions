@@ -45,10 +45,11 @@ jobs:
                 const staleIssues = JSON.parse( process.env.ISSUES );
                 let staleIssuesList = '';
                 staleIssues.forEach(function(issue) {
-                    if ( issue.isStale === false ) {
-                    //if ( true === issue.markedStaleThisRun ) {
+                    if ( true === issue.markedStaleThisRun ) {
                         staleIssuesList += `\\n- [#${issue.number}](https://github.com/jeherve/test-actions/issues/${issue.number}) ${issue.title}`;
                     }
+                    staleIssuesList += `\\n- [#${14}](https://github.com/jeherve/test-actions/issues/14) something`;
+                    staleIssuesList += `\\n- [#${15}](https://github.com/jeherve/test-actions/issues/15) something else`;
                 });
                 return staleIssuesList;
       - name: Post about Stale issues on Slack
