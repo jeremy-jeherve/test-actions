@@ -15,7 +15,7 @@ jobs:
         uses: actions/github-script@v7
         with:
           script: |
-            import assignTypeToIssues from './.github/files/assign-issue-type/assign-issue-type.js';
-            const data = await assignTypeToIssues(github, context, core);
+            const assignTypeToIssues = require('.github/files/assign-issue-type/assign-issue-type.js')
+            const data = await assignTypeToIssues( github, context, core );
             return data;
 

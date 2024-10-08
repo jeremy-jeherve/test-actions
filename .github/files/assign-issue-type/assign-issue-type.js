@@ -96,4 +96,4 @@ async function assignTypeToIssues( github, context, core ) {
 	}
 }
 
-export default assignTypeToIssues;
+module.exports = assignTypeToIssues;
