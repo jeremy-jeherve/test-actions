@@ -1,6 +1,6 @@
 const { setFailed, getInput, debug } = require('@actions/core');
 const { context, getOctokit } = require('@actions/github');
-const { addLabels } = require( './tasks/add-labels' );
+const addLabels = require( './tasks/add-labels' );
 
 (async function main() {
 	const token = getInput('github_token');
