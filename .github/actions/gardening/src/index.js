@@ -1,5 +1,6 @@
 const { setFailed, getInput, debug } = require('@actions/core');
 const { context, getOctokit } = require('@actions/github');
+const { addLabels } = require( './tasks/add-labels' );
 
 (async function main() {
 	const token = getInput('github_token');
@@ -30,6 +31,9 @@ const { context, getOctokit } = require('@actions/github');
 			issue_number: number,
 			labels: ['In Progress'],
 		});
+
+		debug( 'Starting addLabels task' );
+		await addLabels( payload, octokit );
 	}
 
 	debug('Done.');
