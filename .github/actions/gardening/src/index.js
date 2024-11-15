@@ -17,6 +17,11 @@ const addLabels = require( './tasks/add-labels' );
 
 	debug(`Received event = '${eventName}', action = '${payload.action}'`);
 
+	if ( eventName === 'issues' ) {
+		debug( 'Starting triageIssues task' );
+		await triageIssues( payload, octokit );
+	}
+
 	// Trigger something when a Pull Request is opened.
 	if (eventName === 'pull_request_target' && payload.action === 'opened') {
 		debug('Pull Request opened');
