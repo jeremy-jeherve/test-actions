@@ -1,6 +1,7 @@
 const { setFailed, getInput, debug } = require('@actions/core');
 const { context, getOctokit } = require('@actions/github');
 const addLabels = require( './tasks/add-labels' );
+const triageIssues = require( './tasks/triage-issues' );
 
 (async function main() {
 	const token = getInput('github_token');
