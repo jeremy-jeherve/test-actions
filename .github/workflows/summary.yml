@@ -1,0 +1,23 @@
+name: Testing Tests
+
+on:
+  pull_request:
+
+jobs:
+  test-report:
+    name: "Test report"
+    runs-on: ubuntu-latest
+    steps:
+      - name: Display link to test report in Action Summary
+        uses: actions/github-script@v7
+        with:
+          script: |
+            await core.summary
+              .addHeading( 'E2E Test Report' )
+              .addLink(
+                `E2E Test Report`,
+                `https://herve.bzh/${ context.issue.number }/report/`
+              )
+              .addRaw('Please note that it can take a few minutes after the tests checks are complete for the report to be available.', true)
+              .write()
+
