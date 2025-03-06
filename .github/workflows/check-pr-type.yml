@@ -38,7 +38,6 @@ jobs:
 
             // If the PR has no [Type] label, set the status to failure.
             if ( ! prLabels.some( label => label.match( /^\[Type\]/ ) ) ) {
-              core.error( 'Your PR has no [Type] label.' );
               core.setFailed( 'Your PR has no [Type] label.' );
             }
 
