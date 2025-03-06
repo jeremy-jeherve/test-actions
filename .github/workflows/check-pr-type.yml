@@ -26,6 +26,8 @@ jobs:
               }
             } = context;
 
+            core.debug( `the labels on this PR are ${ JSON.stringify( pull_request ) }` );
+
             // If the PR has no [Type] label, set the status to failure.
             if ( ! labels.some( label => label.name.match( /^\[Type\]/ ) ) ) {
               core.setFailed( 'Your PR has no [Type] label.' );
