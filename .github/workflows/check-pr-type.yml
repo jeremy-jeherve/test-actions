@@ -1,0 +1,46 @@
+name: Check PR type
+
+on:
+  pull_request_target: # When a PR is opened, edited, updated, closed, or a label is added.
+    types: [opened, reopened, synchronize, edited, labeled, closed]
+
+jobs:
+  check-pr-type:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check if PR has a [Type] label
+        uses: actions/github-script@v7
+        if: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.event.pull_request.base.repo.full_name }}
+        with:
+          script: |
+            const {
+              repo: {
+                owner: {
+                  login: ownerLogin
+                },
+                repo
+              },
+              issue: {
+                number
+              }
+            } = context;
+
+            core.debug( 'check-pr-type: Get the list of labels on the PR.' );
+            const prLabels = [];
+            for await ( const response of github.paginate.iterator( github.rest.issues.listLabelsOnIssue, {
+              ownerLogin,
+              repo,
+              issue_number: +number,
+              per_page: 100,
+            } ) ) {
+              for ( const label of response.data ) {
+                prLabels.push( label.name );
+              }
+            }
+
+            // If the PR has no [Type] label, set the status to failure.
+            if ( ! prLabels.some( label => label.match( /^\[Type\]/ ) ) ) {
+              core.error( 'Your PR has no [Type] label.' );
+              core.setFailed( 'Your PR has no [Type] label.' );
+            }
+
