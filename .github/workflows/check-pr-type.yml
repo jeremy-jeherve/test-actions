@@ -16,7 +16,7 @@ jobs:
             const {
               repo: {
                 owner,
-                repo: repoName
+                repo
               },
               issue: {
                 number
@@ -27,7 +27,7 @@ jobs:
             const prLabels = [];
             for await ( const response of github.paginate.iterator( github.rest.issues.listLabelsOnIssue, {
               owner,
-              repoName,
+              repo,
               issue_number: +number,
               per_page: 100,
             } ) ) {
