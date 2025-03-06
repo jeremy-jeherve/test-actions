@@ -19,25 +19,15 @@ jobs:
                 repo
               },
               issue: {
-                number
+                number,
+                pull_request: {
+                    labels
+                }
               }
             } = context;
 
-            core.debug( 'check-pr-type: Get the list of labels on the PR.' );
-            const prLabels = [];
-            for await ( const response of github.paginate.iterator( github.rest.issues.listLabelsOnIssue, {
-              owner,
-              repo,
-              issue_number: +number,
-              per_page: 100,
-            } ) ) {
-              for ( const label of response.data ) {
-                prLabels.push( label.name );
-              }
-            }
-
             // If the PR has no [Type] label, set the status to failure.
-            if ( ! prLabels.some( label => label.match( /^\[Type\]/ ) ) ) {
+            if ( ! labels.some( label => label.name.match( /^\[Type\]/ ) ) ) {
               core.setFailed( 'Your PR has no [Type] label.' );
             }
 
