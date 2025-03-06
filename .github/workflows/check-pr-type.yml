@@ -15,10 +15,8 @@ jobs:
           script: |
             const {
               repo: {
-                owner: {
-                  login: ownerLogin
-                },
-                repo
+                owner,
+                repo: repoName
               },
               issue: {
                 number
@@ -28,8 +26,8 @@ jobs:
             core.debug( 'check-pr-type: Get the list of labels on the PR.' );
             const prLabels = [];
             for await ( const response of github.paginate.iterator( github.rest.issues.listLabelsOnIssue, {
-              ownerLogin,
-              repo,
+              owner,
+              repoName,
               issue_number: +number,
               per_page: 100,
             } ) ) {
