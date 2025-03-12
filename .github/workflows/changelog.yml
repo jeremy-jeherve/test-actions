@@ -33,12 +33,29 @@ jobs:
         uses: actions/github-script@v7
         with:
             script: |
-                const { payload : { pull_request : { number, files } } } = context;
+                const { repo: { owner, repo }, payload : { pull_request : { number } } } = context;
+
+                core.debug( `Changelogg check: Get list of files modified in ${ owner }/${ repo } #${ number }.` );
+                const fileList = [];
+                for await ( const response of github.paginate.iterator( github.rest.pulls.listFiles, {
+                    owner,
+                    repo,
+                    pull_number: +number,
+                    per_page: 100,
+                } ) ) {
+                    for ( const file of response.data ) {
+                        fileList.push( file.filename );
+                        if ( file.previous_filename ) {
+                            fileList.push( file.previous_filename );
+                        }
+                    }
+                }
+
                 const changelogDir = '.github/changelog';
-                const hasNewChangelogFile = files.some( file => {
-                    core.info( `Checking file: ${ file.filename }, with status ${ file.status }` );
-                    if ( file.filename.startsWith( changelogDir ) && file.status === 'added' ) {
-                        core.info( `Found new changelog file: ${ file.filename }` );
+                const hasNewChangelogFile = fileList.some( file => {
+                    core.debug( `Checking file: ${ file }` );
+                    if ( file.startsWith( changelogDir ) ) {
+                        core.info( `Found new changelog file: ${ file }` );
                         return true;
                     }
                     return false;
