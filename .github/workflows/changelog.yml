@@ -27,13 +27,13 @@ jobs:
             const hasSkipLabel = prLabels.includes( skipLabel );
 
             if ( hasSkipLabel ) {
-              core.info( `Skipping changelog requirement for this PR (#${ number } because of the "${ skipLabel }" label.` );
+              core.info( `Skipping changelog requirement for this PR (#${ number }) because of the "${ skipLabel }" label.` );
             }
             core.setOutput( 'hasSkipLabel', hasSkipLabel.toString() );
 
       # Check if the PR includes a new added file in the .github/changelog directory.
       - name: "Check if the PR includes a new added file in the .github/changelog directory"
-        if: $${{ steps.has-skip-label.outputs.result == 'false' }}
+        if: $${{ steps.has-skip-label.outputs.hasSkipLabel == 'false' }}
         uses: actions/github-script@v7
         with:
             script: |
