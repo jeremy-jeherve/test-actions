@@ -14,11 +14,14 @@ jobs:
     steps:
       # Allow skipping the changelog if the PR includes the label "Skip Changelog".
       - name: "Check for Skip Changelog label"
-        id: hasSkipLabel
+        id: has-skip-label
         uses: actions/github-script@v7
         with:
           script: |
             const { payload : { pull_request : { number, labels } } } = context;
+
+            core.debug( 'Changelog check: Check for Skip Changelog label' );
+
             const skipLabel = 'Skip Changelog';
             const prLabels = labels.map( label => label.name );
             const hasSkipLabel = prLabels.includes( skipLabel );
@@ -30,12 +33,14 @@ jobs:
 
       # Check if the PR includes a new added file in the .github/changelog directory.
       - name: "Check if the PR includes a new added file in the .github/changelog directory"
+        if: $${{ steps.has-skip-label.outputs.result == 'false' }}
         uses: actions/github-script@v7
         with:
             script: |
                 const { repo: { owner, repo }, payload : { pull_request : { number } } } = context;
 
-                core.debug( `Changelogg check: Get list of files modified in ${ owner }/${ repo } #${ number }.` );
+                core.debug( `Changelog check: Get list of files modified in ${ owner }/${ repo } #${ number }.` );
+
                 const fileList = [];
                 for await ( const response of github.paginate.iterator( github.rest.pulls.listFiles, {
                     owner,
@@ -51,25 +56,18 @@ jobs:
                     }
                 }
 
-                const changelogDir = '.github/changelog';
-                const hasNewChangelogFile = fileList.some( file => {
+                const hasChangelogFile = fileList.some( file => {
                     core.debug( `Checking file: ${ file }` );
-                    if ( file.startsWith( changelogDir ) ) {
-                        core.info( `Found new changelog file: ${ file }` );
+                    if ( file.startsWith( '.github/changelog' ) ) {
+                        core.info( `Found changelog file: ${ file }` );
                         return true;
                     }
                     return false;
                 } );
                 
-                if ( hasNewChangelogFile ) {
-                    core.info( `PR #${ number } includes a new changelog file.` );
+                if ( hasChangelogFile ) {
+                    core.info( `PR #${ number } includes a changelog file.` );
                 } else {
-                    core.info( `PR #${ number } does not include a new changelog file.` );
-                    core.setFailed( `PR #${ number } does not include a new changelog file.` );
+                    core.info( `PR #${ number } does not include a changelog file.` );
+                    core.setFailed( 'Your PR does not include a changelog file. Please add a changelog entry by running \`composer changelog:add\`' );
                 }
-                
-                
-        
-    
-        
-
